@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="easeljs-0.8.1.min.js"></script>
+
+</head>
+<body>
+    <canvas width="400" height="400" id="gameView"></canvas>
+    <script>
+        var myCanvas=document.getElementById("myCanvas");
+        var stage=new createjs.Stage("gameView");
+        //var shape=new createjs.Shape();
+        var image=new createjs.Bitmap("image/bg.png");
+        var man=new createjs.Bitmap("image/man.png");
+        stage.addChild(image);
+
+
+        var mansheet = new createjs.SpriteSheet({
+            "images":["image/man.png"],
+            "frames":{"regX":0,"height":64,"count":45,"regY":1,"width":64},
+            "animations":{
+                "run":{
+                    frames:[21,20,19,18,17,16,15,14,13,12],
+                    next:"run",
+                    speed:0.1,
+                },
+            }
+        });
+        var shape = new createjs.Sprite(mansheet,"run");
+        stage.addChild(shape);
+        shape.x = 0;
+        shape.y = 0;
+        shape.toleft = false;
+        shape.toright = false;
+        shape.toup = false;
+        shape.todown = false;
+        shape.vx = 5;
+        shape.vy = 5;
+        //shape.graphics.beginFill("red").drawRect(0,0,50,50);
+        createjs.Ticker.setFPS(60);
+        createjs.Ticker.addEventListener("tick",tick);
+        window.addEventListener("keydown",keydown);
+        window.addEventListener("keyup",keyup);
+        function keydown(event){
+            event = event||window.event;
+            switch(event.keyCode){
+                case 37:shape.toleft = true;
+                    break;
+                case 38:shape.toup = true;
+                    break;
+                case 39:shape.toright = true;
+                    break;
+                case 40:shape.todown = true;
+                    break;
+            }
+            stage.update();
+        }
+        function keyup(event){
+            event = event||window.event;
+            switch(event.keyCode){
+                case 37:shape.toleft = false;
+                    break;
+                case 38:shape.toup = false;
+                    break;
+                case 39:shape.toright = false;
+                    break;
+                case 40:shape.todown = false;
+                    break;
+            }
+            stage.update();
+        }
+        function tick(event){
+            if(shape.x>stage.canvas.width){
+                shape.x=0;
+            }
+            if(shape.y>stage.canvas.height){
+                shape.y=0;
+            }
+            if(shape.x < 0){
+                shape.x=stage.canvas.width;
+            }
+            if(shape.y < 0){
+                shape.y=stage.canvas.height;
+            }
+
+            if(shape.toleft){
+                shape.x -= shape.vx;
+            }
+            if(shape.toright){
+                shape.x += shape.vx;
+            }
+            if(shape.toup){
+                shape.y -= shape.vy;
+            }
+            if(shape.todown){
+                shape.y += shape.vy;
+            }
+            stage.update();
+        }
+        stage.addChild(shape);
+        stage.update();
+    </script>
+</body>
+</html>
