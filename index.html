@@ -24,18 +24,28 @@
                 "run":{
                     frames:[21,20,19,18,17,16,15,14,13,12],
                     next:"run",
-                    speed:0.1,
+                    speed:1/6,
                 },
             }
         });
+        createjs.SpriteSheetUtils.addFlippedFrames(mansheet, true, false, false);
+        var fps = new createjs.Text("fuck you","36px Arial","#000");
+        fps.x = 0;
+        fps.y = 20;
+
+
+        stage.addChild(fps);
         var shape = new createjs.Sprite(mansheet,"run");
         stage.addChild(shape);
+
         shape.x = 0;
         shape.y = 0;
         shape.toleft = false;
         shape.toright = false;
         shape.toup = false;
         shape.todown = false;
+        shape.goleft = false;
+        shape.goright = false;
         shape.vx = 5;
         shape.vy = 5;
         //shape.graphics.beginFill("red").drawRect(0,0,50,50);
@@ -45,12 +55,23 @@
         window.addEventListener("keyup",keyup);
         function keydown(event){
             event = event||window.event;
+
             switch(event.keyCode){
-                case 37:shape.toleft = true;
+                case 37:shape.toleft = true;shape.goleft = true;
+                        if(shape.goright){
+                            shape.x += 64;
+                            shape.goright = false;
+                        }
+                        shape.gotoAndPlay("run_h");
                     break;
                 case 38:shape.toup = true;
                     break;
-                case 39:shape.toright = true;
+                case 39:shape.toright = true;shape.goright = true;
+                        if(shape.goleft){
+                            shape.x -= 64;
+                            shape.goleft = false;
+                        }
+                        shape.gotoAndPlay("run");
                     break;
                 case 40:shape.todown = true;
                     break;
@@ -72,6 +93,7 @@
             stage.update();
         }
         function tick(event){
+            fps.text = Math.round(createjs.Ticker.getMeasuredFPS())+" fps";
             if(shape.x>stage.canvas.width){
                 shape.x=0;
             }
